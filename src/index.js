@@ -24,6 +24,7 @@ function init() {
     showForm();
     hideTitle();
   }
+  localStorage.setItem("todos", JSON.stringify([]));
   loadTodosFromLocalStorage();
   updateDisplay();
   getWeather();
