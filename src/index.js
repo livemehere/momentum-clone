@@ -26,6 +26,7 @@ function init() {
   }
   loadTodosFromLocalStorage();
   updateDisplay();
+  getWeather();
 }
 
 loginForm.addEventListener("submit", (e) => {
@@ -119,3 +120,23 @@ todos.addEventListener("click", (e) => {
     updateDisplay();
   }
 });
+
+function getWeather() {
+  navigator.geolocation.getCurrentPosition((position) => {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    const api = "979787d17ff36d6639902212e1d6ffe4";
+
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api}&units=metric`
+    )
+      .then((data) => data.json())
+      .then((data) => {
+        const location = document.getElementById("location");
+        const temp = document.getElementById("temp");
+
+        location.innerHTML = data.main.temp;
+        temp.innerHTML = data.name;
+      });
+  });
+}
