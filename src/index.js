@@ -1,10 +1,16 @@
-import "./css/index.css";
+import "./css/index.scss";
 
 const loginForm = document.querySelector("#login-form");
 const userName = document.querySelector("#username");
 const title = document.querySelector("#title");
 const wrapTitle = document.querySelector("#wrap-title");
 const resetBtn = document.querySelector("#reset-btn");
+
+const todos = document.querySelector(".todos");
+const addForm = document.querySelector(".add-form");
+const text = document.getElementById("new-input");
+
+let todoArray = [];
 
 init();
 
@@ -18,6 +24,8 @@ function init() {
     showForm();
     hideTitle();
   }
+  loadTodosFromLocalStorage();
+  updateDisplay();
 }
 
 loginForm.addEventListener("submit", (e) => {
@@ -42,7 +50,6 @@ function hideForm() {
   loginForm.style.display = "none";
 }
 function hideTitle() {
-  console.log("hideTitle");
   wrapTitle.style.display = "none";
 }
 function showTitle(name) {
@@ -59,3 +66,56 @@ function checkUserName() {
 function removeUserNameFromLocalStorage() {
   localStorage.removeItem("name");
 }
+
+function addTodo(text) {
+  const obj = {
+    id: Date.now(),
+    text: text,
+  };
+  todoArray.push(obj);
+}
+
+addForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  addTodo(text.value);
+  text.value = "";
+  updateLocalStorage(todoArray);
+  loadTodosFromLocalStorage();
+  updateDisplay();
+});
+
+function updateLocalStorage(arr) {
+  localStorage.setItem("todos", JSON.stringify(arr));
+}
+
+function loadTodosFromLocalStorage() {
+  const LStodos = localStorage.getItem("todos");
+  todoArray = [...JSON.parse(LStodos)];
+}
+
+function updateDisplay() {
+  todos.innerHTML = "";
+  todoArray.forEach((todo) => {
+    let li = document.createElement("li");
+
+    let template = `
+    <li class="todo" id="${todo.id}">
+        <span>${todo.text}</span>
+        <button ><i class="fas fa-trash" id="remove-btn"></i></button>
+    </li>
+    `;
+    li.innerHTML = template;
+    todos.appendChild(li);
+    li.scrollIntoView();
+  });
+}
+
+todos.addEventListener("click", (e) => {
+  const id = e.target.parentNode.parentNode.id;
+  if (e.target.id == "remove-btn") {
+    todoArray = todoArray.filter((todo) => todo.id != id);
+    updateLocalStorage(todoArray);
+    loadTodosFromLocalStorage();
+    updateDisplay();
+  }
+});
