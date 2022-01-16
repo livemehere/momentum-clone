@@ -1,6 +1,3 @@
 # Momentum
 
-## 작업시
-
-- [ ] npm webpack -w
-- [ ] whatch sass
+## Blog 포스팅을 참조해주세요
